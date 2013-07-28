@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Tasker</title>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+	<link rel="stylesheet" href="css/standard.css"/>
+</head>
+<body>
+<table border="0" style="width: 100%;">
+	<tr>
+		<td style="width: 100%;">
+			<fieldset>
+				<legend>Сообщение системы</legend>
+				<? $flash = $this->core->misc->getFlash(); ?>
+				<? if ($flash): ?>
+				<?= $flash ?>
+				<? else: ?>
+				<span>Сообщений от системы нет</span>
+				<?endif; ?>
+			</fieldset>
+		</td>
+		<td>
+			<fieldset>
+				<legend>Пользователь</legend>
+				<? if ($this->core->user): ?>
+				<table>
+					<tr>
+						<td>
+							<?= $this->core->user->name; ?>
+						</td>
+						<td>
+							<form action="<?= $this->www ?>" method="post">
+								<input type="hidden" name="action" value="User-logout">
+								<input type="submit" value="Выйти">
+							</form>
+						</td>
+					</tr>
+				</table>
+
+
+				<? else: ?>
+				Аноним
+				<?endif; ?>
+			</fieldset>
+		</td>
+	</tr>
+</table>
+
+
+
+{% block content %}{% endblock %}
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="js/standard.js"></script>
+</body>
+</html>

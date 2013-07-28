@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Tasker:{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="web/css/mobile.css"/>
+</head>
+<body>
+<table border="0" style="width: 100%;">
+	<tr>
+		<td style="width: 100%;">
+			<fieldset>
+				<legend>Сообщение системы</legend>
+				{% for flash in core.misc.getFlash() %}
+					<div class="{% if flash.status == 'ok' %}systemMessageGood{% else %}systemMessageBad{% endif %}">
+						{{ flash.message }}
+					</div>
+				{% else %}
+					<div class="systemMessage">
+						Сообщений от системы нет
+					</div>
+				{% endfor %}
+			</fieldset>
+		</td>
+		<td>
+			<fieldset>
+				<legend>Пользователь</legend>
+				<div style="padding:3px;">
+					{% if core.user %}
+						{{ core.user.name }}
+					{% else %}
+						Аноним
+					{% endif %}
+				</div>
+			</fieldset>
+		</td>
+	</tr>
+</table>
+{% block content %}
+	таскер
+{% endblock %}
+<hr>
+{% if core.user %}
+	<form action="" method="post">
+		<input type="hidden" name="action" value="User-logout">
+		<input type="submit" value="Выйти" style="height:70px">
+	</form>
+{% endif %}
+<hr>
+<a href="news.php">Новости проекта</a>
+<script src="web/js/jquery-2.0.2.min.js"></script>
+<script src="web/js/mobile.js"></script>
+</body>
+</html>

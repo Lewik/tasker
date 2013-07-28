@@ -1,0 +1,185 @@
+{% extends 'mobile/Base.twig' %}
+{% block title %}
+	Список задач
+{% endblock %}
+
+{% block content %}
+
+	<table style="width: 100%">
+		<tr>
+			<td>
+				<form action="{{ www }}" method="post">
+					<input type="hidden" name="action" value="Task-create"/>
+					<input type="submit" value="Создать задачу" style="height: 100px; width: 100%;"/>
+				</form>
+			</td>
+			<td>
+
+				<form action="{{ www }}" class="taskListTagSelectorForm" method="post">
+
+					<input type="hidden" name="action" value="Task-showTaskList"/>
+
+					<select class="taskListTagSelector" name="taskByTag" id=""
+					        style="height: 100px; width: 100%; font-size: 1.3em;">
+						<option value="__all">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Все теги</option>
+						{% for tag in tags %}
+							<option value="{{ tag.id }}" {% if tag.id == currentTag %}selected{% endif %}>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ tag.name }}</option>
+						{% endfor %}
+						<option value="__create">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Создать новый тег</option>
+					</select>
+
+					<input type="hidden" name="createNewTag" class="taskListNewTag" value=""/>
+
+				</form>
+			</td>
+		</tr>
+	</table>
+
+	{% for task in tasks %}
+		<div class="taskTitleContainer" data-id='{{ task.id }}'>
+			<table style="width: 100%;">
+				<tr>
+					<td>
+						<input class="taskOpener" data-id="{{ task.id }}" type="button" value="Открыть" style="height: 95px"/>
+					</td>
+					<td style="padding-left: 20px; width: 100%;">
+						<div class="taskTitleTextContainer">
+							<span style="font-weight: bold">
+								{% if task.title != '' %}
+									{{ task.title }}
+								{% else %}
+									Без названия
+								{% endif %}
+							</span>
+
+							{% if task.text != '' %}
+								{{ task.text[:300] }}{% if task.text|length > 300 %}...{% endif %}
+							{% else %}
+								Без текста
+							{% endif %}
+						</div>
+						<div>
+							{% for tagId in task.tags %}
+								{% if loop.first %}[{% else %}|{% endif %}
+								{{ tags[tagId].name }}
+								{% if loop.last %}]{% endif %}
+							{% endfor %}
+						</div>
+					</td>
+				</tr>
+			</table>
+
+		</div>
+
+		<div class="taskEditorContainer" style='display: none' data-id="{{ task.id }}">
+			<form action="{{ www }}" method="post">
+				<input type="hidden" name="action" value="Task-edit"/>
+				<input type="hidden" name="id" value="{{ task.id }}"/>
+				<table style="width: 100%;">
+					<tr>
+
+						<td rowspan="2" style=" vertical-align: top;">
+							<input class="taskMinimizer" data-id="{{ task.id }}" type="button" value="Свернуть" style="height: 100px; width: 100%;"/>
+
+							<input type="submit" value="Сохранено" id="saveButton{{ task.id }}"
+							       style="height: 100px; width: 100%; background-color: green; color: white"/>
+							<input type="button" value="Удалить" style="height: 100px; width: 100%;"
+							       onclick="window.location.href = '{{ www }}?action=Task-delete&id={{ task.id }}'"/>
+
+
+							<select multiple="multiple" name="tag[]" id=""
+							        style="height: 100px; width: 100%; font-size: 1.3em;" class="taskTagSelector"
+							        data-id="{{ task.id }}">
+								<option value="" selected="selected" disabled="disabled">&nbsp;&nbsp;&nbsp;Теги
+									({{ task.tags.lenght }})
+								</option>
+								{% for tag in tags %}
+									<option value="{{ tag.id }}" {% if tag.id in task.tags %}selected{% endif %}>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ tag.name }}</option>
+								{% endfor %}
+								<!--<option value="__create">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Создать новый тег</option>-->
+							</select>
+
+						</td>
+						<td style="width: 100%;">
+							<input style="width: 90%;" type="text" name="title" value="{{ task.title }}"
+							       onchange="markAsUnsaved('{{ task.id }}')"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<textarea style="width: 90%;" name="text" cols="30" rows="10"
+							          onchange="markAsUnsaved('{{ task.id }}')">{{ task.text }}</textarea>
+						</td>
+					</tr>
+				</table>
+			</form>
+
+			<div style="padding: 0 20px 5px 20px">
+				{% for tagId in task.tags %}
+					{% if loop.first %}[{% else %}|{% endif %}
+					{{ tags[tagId].name }}
+					{% if loop.last %}]{% endif %}
+				{% endfor %}
+			</div>
+
+		</div> {# end of editor container #}
+
+
+		<hr>
+	{% endfor %}
+
+
+	<table style="width: 100%;">
+		<tr>
+			<td>
+
+				<form action="{{ www }}" class="editTagSelectorForm" method="post">
+
+					<input type="hidden" name="action" value="Tag-edit"/>
+
+					<select class="editTagSelector" name="tag" id=""
+					        style="height: 100px; width: 100%; font-size: 1.3em;">
+						<option disabled="disabled" selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Переименование
+							тега
+						</option>
+
+						{% for tag in tags %}
+							<option value="{{ tag.id }}" {% if tag.id in task.tags %}selected{% endif %}>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ tag.name }}</option>
+						{% endfor %}
+					</select>
+
+					<input type="hidden" name="newName" class="editTagNewName" value=""/>
+
+				</form>
+
+
+			</td>
+			<td>
+
+				<form action="{{ www }}" class="deleteTagSelectorForm" method="post">
+
+					<input type="hidden" name="action" value="Tag-delete"/>
+
+					<select class="deleteTagSelector" name="tag" id=""
+					        style="height: 100px; width: 100%; font-size: 1.3em;">
+						<option disabled="disabled" selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Удаление
+							тега
+						</option>
+
+						{% for tag in tags %}
+							<option value="{{ tag.id }}" {% if tag.id in task.tags %}selected{% endif %}>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ tag.name }}</option>
+						{% endfor %}
+					</select>
+
+				</form>
+
+
+			</td>
+		</tr>
+	</table>
+
+{% endblock %}

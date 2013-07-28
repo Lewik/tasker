@@ -1,0 +1,17 @@
+<?php
+/**
+ * Created by JetBrains PhpStorm.
+ * User: lllew_000
+ * Date: 13.05.13
+ * Time: 23:59
+ * To change this template use File | Settings | File Templates.
+ */
+
+class Config
+{
+	public $isDev = false;
+	public $mysql_host = 'localhost';
+	public $mysql_base = '';
+	public $mysql_user = 'root';
+	public $mysql_password = '';
+}
