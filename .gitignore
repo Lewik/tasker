@@ -1,0 +1,4 @@
+.idea
+Caches/Twig/*
+hl_log.html
+Config.php
