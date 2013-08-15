@@ -1,0 +1,3 @@
+lewik_page_homepage:
+    pattern:  /
+    defaults: { _controller: LewikPageBundle:MainPage:index }

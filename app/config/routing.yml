@@ -1,0 +1,12 @@
+lewik_system:
+    resource: "@LewikSystemBundle/Resources/config/routing.yml"
+    prefix:   /
+
+lewik_page:
+    resource: "@LewikPageBundle/Resources/config/routing.yml"
+    prefix:   /
+
+lewik_user:
+    resource: "@LewikUserBundle/Resources/config/routing.yml"
+    prefix:   /user
+
